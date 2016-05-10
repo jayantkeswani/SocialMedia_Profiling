@@ -2,7 +2,7 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 
-__author__ = "sumanaravikrishnan"
+__author__ = "jayantkeswani"
 __date__ = "$29-Jan-2016 19:06:24$"
 
 import facebook
