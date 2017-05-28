@@ -1,7 +1,3 @@
-# To change this license header, choose License Headers in Project Properties.
-# To change this template file, choose Tools | Templates
-# and open the template in the editor.
-
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from numpy import genfromtxt, savetxt
 from sklearn.naive_bayes import GaussianNB
@@ -13,47 +9,6 @@ from math import sqrt
 targetFeatures = {"gender" : 2, "age" : 1, "ope" : 3, "con" : 4, "ext" : 5, "agr" : 6, "neu" : 7}
 featureNames = ["gender", "age", "ope", "con", "ext", "agr", "neu"]
 
-def get_test_data_likes(opts, profile_data, field):
-    training_data = profile_data['training_data']
-    testing_data  = profile_data['testing_data']
-
-    userid_relations = {}
-    file = "%s/relation/relation.csv" % opts.inputdir
-    for i,userid,likeid in genfromtxt(file, delimiter=',', dtype=str, skip_header = 1):
-        if userid in testing_data:
-            try:
-                userid_relations[userid].append(likeid)
-            except KeyError:
-                userid_relations[userid] = [likeid]
-    import pickle
-    try:
-        profile_map = pickle.load(open("text/models/profile_map.pickle", "rb"))
-    except IOError:
-        category_hash = {}
-        profile_map   = {}
-        with open("scrapper/pagelikes.csv",'rb') as file:
-            for i,record in enumerate(genfromtxt(file, delimiter=',', dtype=str, skip_header = 1)):
-                if i % 100 == 0:
-                    print(i)
-                like_id      = record[0]
-                page_type    = record[1][1:-1]
-                category_val = category_hash.get(page_type)
-                if not category_val:
-                    category_val = len(category_hash)
-                    category_hash[page_type] = category_val
-                values = [float(_val) for _val in record[2:]]
-                profile_map[like_id] = [category_val] + values
-        pickle.dump(profile_map, open("text/models/profile_map.pickle", "wb"))
-    test_records = {}
-    for user_id,relations in userid_relations.items():
-        for relation in relations:
-            relation_val = profile_map.get(relation)
-            if relation_val:
-                try:
-                    test_records[user_id].append(relation_val)
-                except KeyError:
-                    test_records[user_id] = [relation_val]
-    return test_records
 
 def aget_test_data_likes(opts, profile_data, field):
     training_data = profile_data['training_data']
@@ -96,6 +51,48 @@ def aget_test_data_likes(opts, profile_data, field):
                 except KeyError:
                     test_records[user_id] = [relation_val]
     print(list(test_records.items())[0])
+    return test_records
+
+def get_test_data_likes(opts, profile_data, field):
+    training_data = profile_data['training_data']
+    testing_data  = profile_data['testing_data']
+    
+    userid_relations = {}
+    file = "%s/relation/relation.csv" % opts.inputdir
+    for i,userid,likeid in genfromtxt(file, delimiter=',', dtype=str, skip_header = 1):
+        if userid in testing_data:
+            try:
+                userid_relations[userid].append(likeid)
+            except KeyError:
+                userid_relations[userid] = [likeid]
+    import pickle
+    try:
+        profile_map = pickle.load(open("text/models/profile_map.pickle", "rb"))
+    except IOError:
+        category_hash = {}
+        profile_map   = {}
+        with open("scrapper/pagelikes.csv",'rb') as file:
+            for i,record in enumerate(genfromtxt(file, delimiter=',', dtype=str, skip_header = 1)):
+                if i % 100 == 0:
+                    print(i)
+                like_id      = record[0]
+                page_type    = record[1][1:-1]
+                category_val = category_hash.get(page_type)
+                if not category_val:
+                    category_val = len(category_hash)
+                    category_hash[page_type] = category_val
+                values = [float(_val) for _val in record[2:]]
+                profile_map[like_id] = [category_val] + values
+        pickle.dump(profile_map, open("text/models/profile_map.pickle", "wb"))
+    test_records = {}
+    for user_id,relations in userid_relations.items():
+        for relation in relations:
+            relation_val = profile_map.get(relation)
+            if relation_val:
+                try:
+                    test_records[user_id].append(relation_val)
+                except KeyError:
+                    test_records[user_id] = [relation_val]
     return test_records
 
 def bayes_randomforest_input(opts, profile_data, field):
@@ -220,3 +217,4 @@ def bayes_randomforest_input(opts, profile_data, field):
         print(field + " RMSE : " + str(rmse))
 
     return randForest,test_records,accuracy_score
+
