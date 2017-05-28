@@ -11,7 +11,6 @@ try:
     sys.exit(1)
 except ValueError:
     access_token = r.content.split('=')[1]
-print(r.content)
 """
 
 """
@@ -104,4 +103,3 @@ if __name__ == "__main__":
 
     for i in range(0, len(like_ids), 10):
         facebook_conn.get_pages(like_ids[i:i+10], outputdir=outputdir)
-

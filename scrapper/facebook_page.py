@@ -5,10 +5,6 @@ from html.parser import HTMLParser
 
 input = argv[1]
 
-"""
-r = requests.get(argv[1])
-"""
-
 file = open(argv[1])
 
 data = file.read()

@@ -1,7 +1,3 @@
-# To change this license header, choose License Headers in Project Properties.
-# To change this template file, choose Tools | Templates
-# and open the template in the editor.
-
 __author__ = "jayantkeswani"
 __date__ = "$29-Jan-2016 19:06:24$"
 
@@ -59,7 +55,7 @@ def relation():
         rowList = jsonToList(postJson)
         jsonPagesWriter.writerow(rowList)
     jsonPages.close()
-    
+
 if __name__ == "__main__":
     inputPath = raw_input('Enter a input folder: ')
     outputPath = raw_input('Enter a output folder: ')
